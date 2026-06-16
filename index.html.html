@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Risk Assessment Form</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:Arial,sans-serif;font-size:13px;background:#f0f0f0;color:#1a1a1a;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+.page{max-width:960px;margin:20px auto;background:#fff;border:1px solid #bbb}
+.form-header{background:#1a3a5c;color:#fff;padding:14px 20px;display:-webkit-box;display:flex;-webkit-box-align:center;align-items:center;-webkit-box-pack:justify;justify-content:space-between}
+.form-header h1{font-size:18px;font-weight:700;letter-spacing:.04em;text-transform:uppercase}
+.form-header .doc-ref{font-size:11px;opacity:.75;text-align:right}
+.meta-grid{display:-webkit-box;display:flex;border-bottom:1px solid #bbb}
+.meta-cell{-webkit-box-flex:1;flex:1;border-right:1px solid #bbb}
+.meta-cell:last-child{border-right:none}
+.meta-cell label{display:block;background:#e8edf2;font-size:10px;font-weight:700;text-transform:uppercase;color:#1a3a5c;padding:4px 8px;border-bottom:1px solid #bbb}
+.meta-cell input,.meta-cell textarea{width:100%;border:none;padding:6px 8px;font-size:13px;font-family:inherit;background:#fff;resize:none;outline:none}
+.meta-cell textarea{min-height:44px}
+.section-header{background:#1a3a5c;color:#fff;font-size:11px;font-weight:700;text-transform:uppercase;padding:5px 10px}
+.hazard-scroll{overflow-x:auto;-webkit-overflow-scrolling:touch}
+.hazard-table{width:100%;border-collapse:collapse;min-width:580px}
+.hazard-table th{background:#2c5282;color:#fff;font-size:10px;font-weight:700;text-transform:uppercase;padding:6px 8px;border:1px solid #bbb;text-align:left;vertical-align:top}
+.hazard-table td{border:1px solid #ccc;padding:0;vertical-align:top}
+.hazard-table td.num{width:30px;background:#f7f7f7;text-align:center;font-weight:700;color:#1a3a5c;font-size:13px;padding:8px 4px;vertical-align:middle}
+.hazard-table td input,.hazard-table td textarea{width:100%;border:none;padding:6px 8px;font-family:inherit;font-size:12px;background:transparent;resize:none;outline:none;min-height:36px}
+.hazard-table td textarea{min-height:52px}
+.degree-cell{padding:4px 6px!important}
+.degree-label{font-size:10px;color:#666;margin-bottom:3px}
+.risk-select{width:100%;min-width:110px;font-size:12px;padding:4px 6px;border:1px solid #ccc;border-radius:3px;font-family:inherit;background:#fff}
+.risk-select.extreme{background:#FECACA;color:#7F1D1D;border-color:#EF4444;font-weight:700}
+.risk-select.high{background:#FEF3C7;color:#78350F;border-color:#F59E0B;font-weight:700}
+.risk-select.medium{background:#DBEAFE;color:#1E3A8A;border-color:#3B82F6;font-weight:700}
+.risk-select.low{background:#D1FAE5;color:#065F46;border-color:#10B981;font-weight:700}
+.btn-bar{display:-webkit-box;display:flex}
+.btn-bar button{-webkit-box-flex:1;flex:1;padding:10px;font-size:13px;font-weight:700;font-family:inherit;border:1px solid;cursor:pointer}
+.btn-add{background:#f0f5ff;border-color:#2c5282;color:#2c5282;border-right:none}
+.btn-remove{background:#fff5f5;border-color:#c53030;color:#c53030}
+.matrix-wrap{padding:14px 16px;background:#fafafa;border-bottom:1px solid #bbb}
+.matrix-title{font-size:11px;font-weight:700;text-transform:uppercase;color:#1a3a5c;margin-bottom:8px}
+.matrix-layout{display:-webkit-box;display:flex;gap:20px;-webkit-box-align:start;align-items:flex-start;flex-wrap:wrap}
+.matrix-table{border-collapse:collapse;font-size:11px}
+.matrix-table th,.matrix-table td{border:1px solid #bbb;padding:5px 8px;text-align:center;min-width:54px}
+.matrix-table th{background:#2c5282;color:#fff;font-weight:700;font-size:10px}
+.matrix-table .row-hdr{background:#2c5282;color:#fff;font-weight:700;font-size:10px;text-align:left;white-space:nowrap}
+.m-e{background:#FECACA;color:#7F1D1D;font-weight:700}
+.m-h{background:#FEF3C7;color:#78350F;font-weight:700}
+.m-m{background:#DBEAFE;color:#1E3A8A;font-weight:700}
+.m-l{background:#D1FAE5;color:#065F46;font-weight:700}
+.matrix-legend{font-size:11px}
+.matrix-legend h4{font-size:11px;font-weight:700;text-transform:uppercase;color:#1a3a5c;margin-bottom:6px}
+.legend-item{display:-webkit-box;display:flex;-webkit-box-align:start;align-items:flex-start;gap:6px;margin-bottom:6px}
+.legend-dot{width:14px;height:14px;border-radius:3px;flex-shrink:0;margin-top:1px}
+.legend-text strong{display:block;font-size:11px;font-weight:700}
+.legend-text span{font-size:10px;color:#555}
+.overall-wrap{padding:10px 16px;border-bottom:1px solid #bbb}
+.overall-label{font-size:11px;font-weight:700;text-transform:uppercase;color:#1a3a5c;margin-bottom:6px}
+.overall-desc{font-size:11px;color:#555;margin-bottom:8px}
+.overall-btns{display:-webkit-box;display:flex;gap:6px;flex-wrap:wrap}
+.ov-btn{padding:7px 18px;border:2px solid #ccc;border-radius:4px;background:#fff;font-size:12px;font-weight:700;font-family:inherit;cursor:pointer}
+.ov-btn.active-extreme{background:#FECACA;color:#7F1D1D;border-color:#EF4444}
+.ov-btn.active-high{background:#FEF3C7;color:#78350F;border-color:#F59E0B}
+.ov-btn.active-medium{background:#DBEAFE;color:#1E3A8A;border-color:#3B82F6}
+.ov-btn.active-low{background:#D1FAE5;color:#065F46;border-color:#10B981}
+.signoff-wrap{padding:12px 16px}
+.signoff-grid{display:-webkit-box;display:flex;gap:10px;flex-wrap:wrap;margin-bottom:8px}
+.signoff-field{-webkit-box-flex:1;flex:1;min-width:140px}
+.signoff-field label{display:block;background:#e8edf2;font-size:10px;font-weight:700;text-transform:uppercase;color:#1a3a5c;padding:3px 8px;border:1px solid #bbb;border-bottom:none}
+.signoff-field input{width:100%;border:1px solid #bbb;border-top:none;padding:6px 8px;font-size:13px;font-family:inherit;outline:none}
+.sig-label{font-size:10px;font-weight:700;text-transform:uppercase;color:#1a3a5c;margin-bottom:4px}
+.sig-toggle{display:-webkit-box;display:flex;gap:6px;margin-bottom:4px}
+.sig-toggle button{padding:3px 10px;font-size:11px;font-family:inherit;border:1px solid #bbb;background:#fff;border-radius:3px;cursor:pointer}
+.sig-canvas-wrap{border:1px solid #bbb;background:#fafafa;position:relative}
+.sig-canvas-wrap canvas{display:block;width:100%;height:70px;touch-action:none}
+.sig-type-field{width:100%;border:1px solid #bbb;border-top:none;padding:8px;font-size:16px;font-style:italic;font-family:Georgia,serif;outline:none;display:none}
+.form-footer{background:#1a3a5c;color:#fff;font-size:10px;padding:6px 14px;opacity:.8}
+.print-bar{padding:14px 16px;background:#fff;border-top:2px solid #1a3a5c}
+.print-bar button{width:100%;padding:11px;background:#1a3a5c;color:#fff;border:none;border-radius:4px;font-size:14px;font-weight:700;font-family:inherit;cursor:pointer}
+@media print{
+  .print-bar{display:none!important}
+  .btn-bar{display:none!important}
+  .sig-toggle{display:none!important}
+  body{background:#fff}
+  .page{margin:0;border:none}
+}
+@media(max-width:640px){
+  .meta-grid{flex-wrap:wrap}
+  .meta-cell{min-width:45%}
+  .matrix-layout{-webkit-box-orient:vertical;-webkit-box-direction:normal;flex-direction:column}
+  .overall-wrap{-webkit-box-orient:vertical;-webkit-box-direction:normal;flex-direction:column;-webkit-box-align:start;align-items:flex-start}
+}
+</style>
+</head>
+<body>
+<div class="page">
+
+  <div class="form-header">
+    <h1>Risk Assessment Form</h1>
+    <div class="doc-ref">Version: 1.0</div>
+  </div>
+
+  <div class="meta-grid">
+    <div class="meta-cell"><label>Department / Section</label><input type="text" placeholder="e.g. Electrical, Maintenance"></div>
+    <div class="meta-cell"><label>Date</label><input type="date" id="fld-date"></div>
+    <div class="meta-cell"><label>Job Number</label><input type="text" placeholder="e.g. JOB-001"></div>
+  </div>
+  <div class="meta-grid">
+    <div class="meta-cell"><label>Attendees</label><input type="text" placeholder="Names of all attendees"></div>
+    <div class="meta-cell"><label>Location</label><input type="text" placeholder="Site / work area"></div>
+  </div>
+  <div class="meta-grid" style="border-bottom:none">
+    <div class="meta-cell" style="border-right:none"><label>Area Where Work is Being Carried Out</label><input type="text" placeholder="e.g. Roof, Roof space, Plant room, Side of building"></div>
+  </div>
+  <div class="meta-grid" style="border-bottom:1px solid #bbb">
+    <div class="meta-cell" style="border-right:none"><label>Briefly describe the task</label><textarea rows="2" placeholder="Describe the work / task being assessed..."></textarea></div>
+  </div>
+
+  <div class="section-header">Risk Rating Matrix</div>
+  <div class="matrix-wrap">
+    <div class="matrix-layout">
+      <div>
+        <div class="matrix-title">Likelihood x Consequence</div>
+        <table class="matrix-table">
+          <thead>
+            <tr><th>Likelihood / Consequence</th><th>Low</th><th>Minor</th><th>Moderate</th><th>Major</th><th>Catastrophic</th></tr>
+          </thead>
+          <tbody>
+            <tr><td class="row-hdr">Almost Certain</td><td class="m-e">E</td><td class="m-e">E</td><td class="m-e">E</td><td class="m-e">E</td><td class="m-e">E</td></tr>
+            <tr><td class="row-hdr">Likely</td><td class="m-h">H</td><td class="m-h">H</td><td class="m-e">E</td><td class="m-e">E</td><td class="m-e">E</td></tr>
+            <tr><td class="row-hdr">Possible</td><td class="m-m">M</td><td class="m-h">H</td><td class="m-h">H</td><td class="m-e">E</td><td class="m-e">E</td></tr>
+            <tr><td class="row-hdr">Unlikely</td><td class="m-l">L</td><td class="m-m">M</td><td class="m-m">M</td><td class="m-h">H</td><td class="m-e">E</td></tr>
+            <tr><td class="row-hdr">Rare</td><td class="m-l">L</td><td class="m-l">L</td><td class="m-m">M</td><td class="m-h">H</td><td class="m-h">H</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="matrix-legend">
+        <h4>Risk Levels</h4>
+        <div class="legend-item"><div class="legend-dot" style="background:#FECACA;border:1px solid #EF4444"></div><div class="legend-text"><strong style="color:#7F1D1D">Extreme (E)</strong><span>Immediate action required. Stop work.</span></div></div>
+        <div class="legend-item"><div class="legend-dot" style="background:#FEF3C7;border:1px solid #F59E0B"></div><div class="legend-text"><strong style="color:#78350F">High (H)</strong><span>Senior management attention needed.</span></div></div>
+        <div class="legend-item"><div class="legend-dot" style="background:#DBEAFE;border:1px solid #3B82F6"></div><div class="legend-text"><strong style="color:#1E3A8A">Medium (M)</strong><span>Management responsibility specified.</span></div></div>
+        <div class="legend-item"><div class="legend-dot" style="background:#D1FAE5;border:1px solid #10B981"></div><div class="legend-text"><strong style="color:#065F46">Low (L)</strong><span>Manage by routine procedures.</span></div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section-header">Hazard Identification &amp; Risk Control</div>
+  <div class="hazard-scroll">
+    <table class="hazard-table">
+      <thead>
+        <tr>
+          <th style="width:28px">ID</th>
+          <th style="width:26%">Description of Hazard<br><span style="font-weight:400;font-size:9px;opacity:.8">Include consequences of the hazard</span></th>
+          <th style="width:115px">Risk Rating<br><span style="font-weight:400;font-size:9px;opacity:.8">Degree of Risk</span></th>
+          <th>Control Measures</th>
+          <th style="width:115px">Residual Risk<br><span style="font-weight:400;font-size:9px;opacity:.8">After controls</span></th>
+          <th style="width:20%">Comments</th>
+        </tr>
+      </thead>
+      <tbody id="hazard-tbody"></tbody>
+    </table>
+  </div>
+  <div class="btn-bar">
+    <button class="btn-add" id="btn-add">+ Add Hazard Row</button>
+    <button class="btn-remove" id="btn-remove">&#8722; Remove Hazard Row</button>
+  </div>
+
+  <div class="section-header">Overall Risk Level</div>
+  <div class="overall-wrap">
+    <div class="overall-label">Overall Risk Level</div>
+    <div class="overall-desc">On completion of the Risk Assessment, record the Overall Risk Level by identifying the highest risk level identified. Where the overall risk level is Medium, High or Extreme, contact your manager before any further actions are taken.</div>
+    <div class="overall-btns">
+      <button class="ov-btn" id="ov-E">Extreme</button>
+      <button class="ov-btn" id="ov-H">High</button>
+      <button class="ov-btn" id="ov-M">Medium</button>
+      <button class="ov-btn" id="ov-L">Low</button>
+    </div>
+  </div>
+
+  <div class="section-header">Sign-Off</div>
+  <div class="signoff-wrap">
+    <div class="signoff-grid">
+      <div class="signoff-field"><label>Completed By</label><input type="text" placeholder="Full name"></div>
+      <div class="signoff-field"><label>Position / Role</label><input type="text" placeholder="Job title"></div>
+      <div class="signoff-field"><label>Date</label><input type="date"></div>
+    </div>
+    <div class="sig-label">Signature</div>
+    <div class="sig-toggle">
+      <button id="btn-sig-type">Type instead</button>
+      <button id="btn-sig-clear">Clear</button>
+    </div>
+    <div class="sig-canvas-wrap">
+      <canvas id="sig-canvas" height="100"></canvas>
+    </div>
+    <input type="text" class="sig-type-field" id="sig-type-input" placeholder="Type full name as signature">
+  </div>
+
+  <div class="form-footer">Risk Assessment Form &mdash; Version 1.0</div>
+
+  <div class="print-bar">
+    <button id="btn-print">Print / Save as PDF</button>
+  </div>
+
+</div>
+<script>
+window.onload = function() {
+
+  // Set date
+  var d = new Date();
+  var mo = d.getMonth() + 1;
+  var dy = d.getDate();
+  var yr = d.getFullYear();
+  if (mo < 10) { mo = '0' + mo; }
+  if (dy < 10) { dy = '0' + dy; }
+  document.getElementById('fld-date').value = yr + '-' + mo + '-' + dy;
+
+  // Hazard rows
+  var rowCount = 0;
+
+  function addRow() {
+    rowCount = rowCount + 1;
+    var tbody = document.getElementById('hazard-tbody');
+    var tr = document.createElement('tr');
+
+    var td1 = document.createElement('td');
+    td1.className = 'num';
+    td1.textContent = String(rowCount);
+
+    var td2 = document.createElement('td');
+    var ta = document.createElement('textarea');
+    ta.placeholder = 'Describe hazard and potential consequences...';
+    td2.appendChild(ta);
+
+    var td3 = document.createElement('td');
+    td3.className = 'degree-cell';
+    var lbl3 = document.createElement('div');
+    lbl3.className = 'degree-label';
+    lbl3.innerHTML = 'Select risk level:';
+    var sel3 = document.createElement('select');
+    sel3.className = 'risk-select';
+    sel3.innerHTML = '<option value="">- Select -</option><option value="extreme">Extreme</option><option value="high">High</option><option value="medium">Medium</option><option value="low">Low</option>';
+    sel3.onchange = function() { applyRiskStyle(sel3); };
+    td3.appendChild(lbl3);
+    td3.appendChild(sel3);
+
+    var td4 = document.createElement('td');
+    var inp4 = document.createElement('textarea');
+    inp4.placeholder = 'Control...';
+    td4.appendChild(inp4);
+
+    var td5 = document.createElement('td');
+    td5.className = 'degree-cell';
+    var lbl5 = document.createElement('div');
+    lbl5.className = 'degree-label';
+    lbl5.innerHTML = 'Residual risk:';
+    var sel5 = document.createElement('select');
+    sel5.className = 'risk-select';
+    sel5.innerHTML = '<option value="">- Select -</option><option value="extreme">Extreme</option><option value="high">High</option><option value="medium">Medium</option><option value="low">Low</option>';
+    sel5.onchange = function() { applyRiskStyle(sel5); };
+    td5.appendChild(lbl5);
+    td5.appendChild(sel5);
+
+    var td6 = document.createElement('td');
+    var inp6 = document.createElement('textarea');
+    inp6.placeholder = 'Comments...';
+    td6.appendChild(inp6);
+
+    tr.appendChild(td1);
+    tr.appendChild(td2);
+    tr.appendChild(td3);
+    tr.appendChild(td4);
+    tr.appendChild(td5);
+    tr.appendChild(td6);
+    tbody.appendChild(tr);
+  }
+
+  function removeRow() {
+    var tbody = document.getElementById('hazard-tbody');
+    if (tbody.rows.length > 1) {
+      tbody.deleteRow(tbody.rows.length - 1);
+      rowCount = rowCount - 1;
+    }
+  }
+
+  function applyRiskStyle(sel) {
+    sel.className = 'risk-select';
+    if (sel.value !== '') {
+      sel.className = 'risk-select ' + sel.value;
+    }
+  }
+
+  document.getElementById('btn-add').onclick = addRow;
+  document.getElementById('btn-remove').onclick = removeRow;
+  addRow();
+
+  // Overall risk
+  var ovCodes = ['E', 'H', 'M', 'L'];
+  var ovCls = { E: 'extreme', H: 'high', M: 'medium', L: 'low' };
+
+  function setOverall(code) {
+    for (var i = 0; i < ovCodes.length; i++) {
+      document.getElementById('ov-' + ovCodes[i]).className = 'ov-btn';
+    }
+    document.getElementById('ov-' + code).className = 'ov-btn active-' + ovCls[code];
+  }
+
+  document.getElementById('ov-E').onclick = function() { setOverall('E'); };
+  document.getElementById('ov-H').onclick = function() { setOverall('H'); };
+  document.getElementById('ov-M').onclick = function() { setOverall('M'); };
+  document.getElementById('ov-L').onclick = function() { setOverall('L'); };
+
+  // Print
+  document.getElementById('btn-print').onclick = function() { window.print(); };
+
+  // Signature canvas
+  var sigMode = 'draw';
+  var canvas = document.getElementById('sig-canvas');
+  canvas.width = canvas.offsetWidth || 340;
+  var ctx = canvas.getContext('2d');
+  ctx.strokeStyle = '#111';
+  ctx.lineWidth = 2;
+  ctx.lineCap = 'round';
+  ctx.lineJoin = 'round';
+  var inking = false;
+  var px = 0;
+  var py = 0;
+
+  function getPt(e) {
+    var r = canvas.getBoundingClientRect();
+    var scx = canvas.width / r.width;
+    var scy = canvas.height / r.height;
+    if (e.touches && e.touches.length > 0) {
+      return { x: (e.touches[0].clientX - r.left) * scx, y: (e.touches[0].clientY - r.top) * scy };
+    }
+    return { x: (e.clientX - r.left) * scx, y: (e.clientY - r.top) * scy };
+  }
+
+  canvas.addEventListener('mousedown', function(e) { inking = true; var p = getPt(e); px = p.x; py = p.y; });
+  canvas.addEventListener('mousemove', function(e) { if (!inking) { return; } var p = getPt(e); ctx.beginPath(); ctx.moveTo(px, py); ctx.lineTo(p.x, p.y); ctx.stroke(); px = p.x; py = p.y; });
+  canvas.addEventListener('mouseup', function() { inking = false; });
+  canvas.addEventListener('mouseleave', function() { inking = false; });
+  canvas.addEventListener('touchstart', function(e) { e.preventDefault(); inking = true; var p = getPt(e); px = p.x; py = p.y; }, false);
+  canvas.addEventListener('touchmove', function(e) { e.preventDefault(); if (!inking) { return; } var p = getPt(e); ctx.beginPath(); ctx.moveTo(px, py); ctx.lineTo(p.x, p.y); ctx.stroke(); px = p.x; py = p.y; }, false);
+  canvas.addEventListener('touchend', function() { inking = false; });
+
+  document.getElementById('btn-sig-clear').onclick = function() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+  };
+
+  document.getElementById('btn-sig-type').onclick = function() {
+    if (sigMode === 'draw') {
+      sigMode = 'type';
+      canvas.style.display = 'none';
+      document.getElementById('sig-type-input').style.display = 'block';
+      document.getElementById('btn-sig-type').innerHTML = 'Draw instead';
+    } else {
+      sigMode = 'draw';
+      canvas.style.display = 'block';
+      document.getElementById('sig-type-input').style.display = 'none';
+      document.getElementById('btn-sig-type').innerHTML = 'Type instead';
+    }
+  };
+
+};
+</script>
+</body>
+</html>
